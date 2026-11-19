@@ -86,6 +86,7 @@
   max-width: 1640px;
   margin-inline: auto;
   padding: clamp(12px, 2vw, 24px);
+  padding-inline-end: 54px;
 }
 
 .table-wrap table {
@@ -107,10 +108,46 @@
   white-space: nowrap;
 }
 
-#outlineToggle {
-  background: #e8f0fe;
-  border-color: #aacbf3;
-  color: #005dbb;
+.outline-edge-tab {
+  position: fixed;
+  inset-block-start: 42%;
+  inset-inline-end: 0;
+  z-index: 91;
+  transform: translateY(-50%);
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  width: 42px;
+  padding: 12px 0;
+  border: 1px solid #005dbb;
+  border-inline-end: 0;
+  border-radius: 11px 0 0 11px;
+  background: #005dbb;
+  color: #fff;
+  box-shadow: -3px 3px 12px rgba(20, 38, 65, .22);
+}
+
+.outline-edge-tab:hover {
+  border-color: #004a95;
+  background: #004a95;
+  color: #fff;
+}
+
+.outline-edge-tab:focus-visible {
+  outline-offset: -4px;
+  outline-color: #fff;
+}
+
+.outline-edge-icon {
+  font-size: 17px;
+  line-height: 1;
+}
+
+.outline-edge-label {
+  writing-mode: vertical-rl;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .page-outline {
@@ -167,5 +204,16 @@
 
   @keyframes outline-slide-in {
     from { transform: translateX(100%); }
+  }
+}
+
+
+@media (max-width: 640px) {
+  .page-layout {
+    padding-inline-end: 44px;
+  }
+
+  .outline-edge-tab {
+    width: 36px;
   }
 }
