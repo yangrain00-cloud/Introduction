@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AIDC Company & Reports Database</title><style>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Classification</title><style>
   :root {
     --bg: #f5f5f7;
     --card: #ffffff;
@@ -184,8 +184,8 @@ th:nth-child(1){width:23%}th:nth-child(2){width:20%}th:nth-child(3){width:16%}th
 
 .site-credits{max-width:1640px;margin:0 auto;padding:14px 24px 10px;border-bottom:1px solid var(--border);color:var(--text-secondary);font-size:12px;line-height:1.5}.site-credits p{margin:0}.site-credits-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 24px;max-width:950px;margin:6px 0 0;text-align:left}.site-credits strong{color:var(--text);font-weight:650}.site-credits-role{font-size:.95em}.site-credits-work{line-height:1.55}@media(max-width:600px){.site-credits-grid{grid-template-columns:1fr}}
 .directory-category{font:inherit;color:var(--accent);background:none;border:0;padding:0;text-align:left;cursor:pointer}.directory-category:hover{text-decoration:underline}.directory-category:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-</style><link rel="stylesheet" href="language-switch.css"><link rel="stylesheet" href="customer-navigation.css?v=outline-edge-tab"></head><body>
-<nav class="nav"><div class="nav-inner"><a class="language-switch" lang="en" href="zh.html" data-alternate="zh.html" aria-label="Switch to Chinese" title="Switch to Chinese"><span aria-hidden="true">C</span><span aria-hidden="true">E</span></a><time class="nav-title" datetime="2026-11-17">2026.11.18 UPDATED</time><input aria-label="Search companies, products, or profiles" id="search" placeholder="Search companies, products, or profiles…"><div class="toolbar" id="views"><button data-view="all" class="active">All entries</button><button data-view="sales">Sales Opportunities</button><button data-view="new">New entries</button><button data-view="pending">Reports to review</button><button id="reset">Reset filters</button><button id="export">Export filtered JSON</button></div><div class="customer-filters" id="customerFilters"><select aria-label="Filter by sector" id="sectorFilter"><option value="">All Sectors</option></select><select aria-label="Filter by category" id="categoryFilter"><option value="">All Categories</option></select><select aria-label="Filter by report type" id="linkFilter"><option value="">All Reports</option><option>SEC</option><option>PDF</option><option>IR</option><option>Private</option><option>Review</option></select><select id="roleFilter" aria-label="Roles"><option value="">All Roles</option></select><span class="nav-stats" id="navStats" aria-live="polite"></span></div></div></nav>
+</style><link rel="stylesheet" href="language-switch.css"><link rel="stylesheet" href="customer-navigation.css?v=combined-outline"></head><body>
+<nav class="nav"><div class="nav-inner"><a class="language-switch" lang="en" href="zh.html" data-alternate="zh.html" aria-label="Switch to Chinese" title="Switch to Chinese"><span aria-hidden="true">C</span><span aria-hidden="true">E</span></a><span class="nav-title">Customer Classification</span><input aria-label="Search companies, products, or profiles" id="search" placeholder="Search companies, products, or profiles…"><div class="toolbar" id="views"><button data-view="all" class="active">All entries</button><button data-view="sales">Sales Opportunities</button><button data-view="new">New entries</button><button data-view="pending">Reports to review</button><button id="reset">Reset filters</button><button id="export">Export filtered JSON</button></div><div class="customer-filters" id="customerFilters"><select aria-label="Filter by sector" id="sectorFilter"><option value="">All Sectors</option></select><select aria-label="Filter by category" id="categoryFilter"><option value="">All Categories</option></select><select id="roleFilter" aria-label="Roles"><option value="">All Roles</option></select><select aria-label="Filter by report type" id="linkFilter"><option value="">All Reports</option><option>SEC</option><option>PDF</option><option>IR</option><option>Private</option><option>Review</option></select><span class="nav-stats" id="navStats" aria-live="polite"></span></div></div></nav>
 <div class="site-credits"><p>Created by Leah He and Rain Yang</p><div class="site-credits-grid"><div><p><strong>Leah He 何琳</strong> <span class="site-credits-role">· Sales Engineer</span></p><p class="site-credits-work">Sales opportunity research, competitor brochure library development, and site architecture and visual design</p></div><div><p><strong>Rain Yang 杨依锐</strong> <span class="site-credits-role">· Sales Engineer</span></p><p class="site-credits-work">Customer database development, company research, and classification</p></div></div></div>
 <div class="page-layout"><button type="button" id="outlineToggle" class="outline-edge-tab" aria-haspopup="dialog" aria-controls="outlineDrawer"><span class="outline-edge-icon" aria-hidden="true">☰</span><span class="outline-edge-label">On this page</span></button><dialog class="page-outline" id="outlineDrawer" aria-labelledby="outlineTitle"><header class="outline-header"><h2 id="outlineTitle">On this page</h2><button type="button" id="outlineClose" aria-label="Close contents" autofocus>×</button></header><nav aria-labelledby="outlineTitle"><ul id="outlineLinks"></ul></nav></dialog><main class="main">
 <div id="content"></div>
@@ -1557,7 +1557,12 @@ outlineDrawer.addEventListener('click',event=>{
   if(event.clientX<left||event.clientX>right||event.clientY<top||event.clientY>bottom)outlineDrawer.close();
 });
 outlineLinks.addEventListener('click',event=>{
-  if(event.target.closest('a')&&!event.ctrlKey&&!event.metaKey&&!event.shiftKey&&!event.altKey)outlineDrawer.close();
+  const link=event.target.closest('a[data-outline-view]');
+  if(!link||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
+  event.preventDefault();
+  outlineDrawer.close();
+  if(link.href!==location.href)history.pushState(null,'',link.href);
+  openOutlineLocation();
 });
 const topNav=document.querySelector('.nav');
 const viewToolbar=document.getElementById('views');
@@ -1588,28 +1593,62 @@ function updateOutline(){
 function queueOutlineUpdate(){
   if(!outlineFrame)outlineFrame=requestAnimationFrame(updateOutline);
 }
+const outlineGroups = [
+  {
+    view:'all',
+    title:"Customer Pool",
+    root:'content',
+    entries:[
+      ...getSectors().map(sector=>['sector-'+encodeURIComponent(sectorAnchorName(sector)),sector]),
+      ['brochure-library',"Competition Pages"]
+    ]
+  },
+  {
+    view:'sales',
+    title:"Sales Opportunities",
+    root:'role-validation',
+    entries:[
+      ...[["opportunity-paths","Research Approach"],["customer-pool-tiers","Prospect Segments"],["customer-entry-standard","Qualification Criteria"],["public-evidence-boundary","What Public Sources Can Verify"]],
+      ...CASE_GROUPS.map(group=>[group.id,group.title])
+    ]
+  }
+];
+
+function outlineLink(id,title,view){
+  const link=document.createElement('a');
+  const url=new URL(location.href);
+  if(view==='all')url.searchParams.delete('view');
+  else url.searchParams.set('view',view);
+  url.hash=encodeURIComponent(id);
+  link.href=url.href;
+  link.dataset.outlineView=view;
+  link.textContent=title;
+  return link;
+}
+
 function renderOutline(){
   outlineLinks.replaceChildren();
-  outlineEntries=Array.from(document.querySelectorAll('main [data-outline-target]'),target=>{
+  outlineEntries=[];
+  for(const group of outlineGroups){
     const item=document.createElement('li');
-    const link=document.createElement('a');
-    const heading=target.matches('.section')?target.querySelector('h2'):target;
-    const level=Number(target.dataset.outlineLevel)||(heading.matches('h1,h2,h3,h4,h5,h6')?Number(heading.tagName[1]):2);
-    item.style.setProperty('--outline-indent',level-1);
-    link.href='#'+encodeURIComponent(target.id);
-    const title=document.createElement('span');
-    title.className='outline-title';
-    title.textContent=heading.textContent.trim();
-    link.append(title);
-    if(target.dataset.outlineNote){
-      const note=document.createElement('span');
-      note.className='outline-note';
-      note.textContent=target.dataset.outlineNote;
-      link.append(note);
+    item.className='outline-group';
+    const groupLink=outlineLink(group.root,group.title,group.view);
+    groupLink.className='outline-group-title';
+    const children=document.createElement('ul');
+    for(const [id,title] of group.entries){
+      const row=document.createElement('li');
+      const link=outlineLink(id,title,group.view);
+      row.append(link);
+      children.append(row);
+      const target=document.getElementById(id);
+      if(target)outlineEntries.push({target,link});
     }
-    item.append(link);
+    item.append(groupLink,children);
     outlineLinks.append(item);
-    return {target,link};
+  }
+  outlineEntries.sort((a,b)=>{
+    if(a.target===b.target)return 0;
+    return a.target.compareDocumentPosition(b.target)&Node.DOCUMENT_POSITION_FOLLOWING?-1:1;
   });
   updateOutline();
 }
@@ -1628,11 +1667,22 @@ document.getElementById('content').addEventListener('click',e=>{const sort=e.tar
     return;
   }
   if(e.target.closest('a,details'))return;const row=e.target.closest('[data-row]');if(row)toggle(row.dataset.row);});
-document.getElementById('views').addEventListener('click',e=>{const b=e.target.closest('[data-view]');if(b){activeView=b.dataset.view;if(activeView==='all'){['search','sectorFilter','categoryFilter','linkFilter','roleFilter'].forEach(id=>document.getElementById(id).value='');fillOptions('categoryFilter',getCategories(''));history.replaceState(null,'',location.pathname+location.search);}render();}});
+document.getElementById('views').addEventListener('click',e=>{
+  const button=e.target.closest('[data-view]');
+  if(!button)return;
+  activeView=button.dataset.view;
+  if(activeView==='all')clearOutlineFilters();
+  const url=new URL(location.href);
+  url.hash='';
+  if(activeView==='all')url.searchParams.delete('view');
+  else url.searchParams.set('view',activeView);
+  history.replaceState(null,'',url.href);
+  render();
+});
 document.getElementById('search').addEventListener('input',render);
 document.getElementById('sectorFilter').addEventListener('change',()=>{const s=document.getElementById('sectorFilter').value;if(s&&activeView==='sales')activeView='all';fillOptions('categoryFilter',getCategories(s));render();});
 ['categoryFilter','linkFilter','roleFilter'].forEach(id=>document.getElementById(id).addEventListener('change',render));
-document.getElementById('reset').addEventListener('click',()=>{['search','sectorFilter','categoryFilter','linkFilter','roleFilter'].forEach(id=>document.getElementById(id).value='');activeView='all';history.replaceState(null,'',location.pathname+location.search);sortKey='category';sortAsc=true;expanded.clear();fillOptions('categoryFilter',getCategories(document.getElementById('sectorFilter').value));render();});
+document.getElementById('reset').addEventListener('click',()=>{['search','sectorFilter','categoryFilter','linkFilter','roleFilter'].forEach(id=>document.getElementById(id).value='');activeView='all';const url=new URL(location.href);url.hash='';url.searchParams.delete('view');history.replaceState(null,'',url.href);sortKey='category';sortAsc=true;expanded.clear();fillOptions('categoryFilter',getCategories(document.getElementById('sectorFilter').value));render();});
 document.getElementById('export').addEventListener('click',()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(activeView === 'sales' ? filteredData : filteredData.map(company => ({ ...company, specialty: company.category, category: categoryName(company), role_for_us: OPPORTUNITY_ROLES[commercialProfile(company).role].label })),null,2)],{type:'application/json;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download=activeView==='sales'?'project-role-evidence-2026-11-18.json':'aidc-filtered-2026-11-18.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
 const roleFilter=document.getElementById('roleFilter');
 Object.entries(OPPORTUNITY_ROLES).forEach(([key,role])=>roleFilter.add(new Option(role.label,key)));
@@ -1640,23 +1690,44 @@ fillOptions('sectorFilter',getSectors());fillOptions('categoryFilter',getCategor
 
 
 function sectorAnchorName(sector) { return ({"AI Applications & Models":"AI应用 / 模型公司","Cloud Service Providers & Hyperscalers":"云厂商（CSP）/ Hyperscaler","Data Center Operators & AI Factories":"数据中心业主 / Colo / AI Factory","AI Servers & Racks (ODM / OEM)":"AI 服务器 / Rack / ODM / OEM","AI Chips & Semiconductor Supply Chain":"AI 芯片 / 半导体供应链","AI Power & Electrical Infrastructure":"AI 电力与功率电子基础设施","Data Center Cooling & Thermal Management":"AI 数据中心冷却与热管理系统"})[sector] ?? sector; }
-function openLinkedPowerSector(){
-  let anchor;
-  try{anchor=decodeURIComponent(location.hash.slice(1));}catch{return;}
-  const power="AI Power & Electrical Infrastructure";
-  if(!['sector-'+encodeURIComponent(sectorAnchorName(power)),'product-brochures','brochure-library'].includes(anchor))return;
-  if(activeView!=='all'||!document.getElementById(anchor)){
-    activeView='all';
-    if(!document.getElementById(anchor)){
-      ['search','sectorFilter','categoryFilter','linkFilter','roleFilter'].forEach(id=>document.getElementById(id).value='');
-      fillOptions('categoryFilter',getCategories(''));
-    }
+function clearOutlineFilters(){
+  for(const id of ['search','sectorFilter','categoryFilter','linkFilter','roleFilter']){
+    document.getElementById(id).value='';
+  }
+  fillOptions('categoryFilter',getCategories(''));
+}
+
+function openOutlineLocation(){
+  let id;
+  try{id=decodeURIComponent(location.hash.slice(1));}catch{return;}
+  const group=outlineGroups.find(item=>item.root===id||item.entries.some(([anchor])=>anchor===id));
+  const view=group?.view||(id==='product-brochures'?'all':null);
+  if(!view)return;
+  if(activeView!==view||!document.getElementById(id)){
+    activeView=view;
+    clearOutlineFilters();
     render();
   }
-  requestAnimationFrame(()=>{updateOutline();document.getElementById(anchor)?.scrollIntoView({block:'start'});});
+  requestAnimationFrame(()=>{
+    updateOutline();
+    const target=document.getElementById(id);
+    if(id==='content')window.scrollTo({top:0});
+    else target?.scrollIntoView({block:'start'});
+  });
 }
-window.addEventListener('hashchange',openLinkedPowerSector);
-openLinkedPowerSector();
+
+window.addEventListener('hashchange',openOutlineLocation);
+window.addEventListener('popstate',()=>{
+  if(location.hash){
+    openOutlineLocation();
+    return;
+  }
+  const requested=new URLSearchParams(location.search).get('view')||'all';
+  if(activeView!==requested){
+    document.querySelector(`#views button[data-view="${CSS.escape(requested)}"]`)?.click();
+  }
+});
+openOutlineLocation();
 </script><script src="language-switch.js"></script></body></html>
 
 

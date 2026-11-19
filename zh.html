@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AIDC Company & Reports Database</title><style>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>客户分类</title><style>
   :root {
     --bg: #f5f5f7;
     --card: #ffffff;
@@ -184,8 +184,8 @@ th:nth-child(1){width:23%}th:nth-child(2){width:20%}th:nth-child(3){width:16%}th
 
 .site-credits{max-width:1640px;margin:0 auto;padding:14px 24px 10px;border-bottom:1px solid var(--border);color:var(--text-secondary);font-size:12px;line-height:1.5}.site-credits p{margin:0}.site-credits-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 24px;max-width:950px;margin:6px 0 0;text-align:left}.site-credits strong{color:var(--text);font-weight:650}.site-credits-role{font-size:.95em}.site-credits-work{line-height:1.55}@media(max-width:600px){.site-credits-grid{grid-template-columns:1fr}}
 .directory-category{font:inherit;color:var(--accent);background:none;border:0;padding:0;text-align:left;cursor:pointer}.directory-category:hover{text-decoration:underline}.directory-category:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-</style><link rel="stylesheet" href="language-switch.css"><link rel="stylesheet" href="customer-navigation.css?v=outline-edge-tab"></head><body>
-<nav class="nav"><div class="nav-inner"><a class="language-switch" lang="zh-CN" href="./" data-alternate="./" aria-label="切换到英文" title="Switch to English"><span aria-hidden="true">&#20013;</span><span aria-hidden="true">&#33521;</span></a><time class="nav-title" datetime="2026-11-17">2026.11.18 UPDATED</time><input aria-label="搜索公司、产品或介绍" id="search" placeholder="搜索公司、产品或介绍…"><div class="toolbar" id="views"><button data-view="all" class="active">客户池</button><button data-view="sales">商机</button><button data-view="new">本轮新增</button><button data-view="pending">报告待复核</button><button id="reset">重置筛选</button><button id="export">导出当前JSON</button></div><div class="customer-filters" id="customerFilters"><select aria-label="筛选Sector" id="sectorFilter"><option value="">全部行业</option></select><select aria-label="筛选Category" id="categoryFilter"><option value="">全部分类</option></select><select aria-label="筛选Report" id="linkFilter"><option value="">全部报告</option><option>SEC</option><option>PDF</option><option>IR</option><option>Private</option><option>Review</option></select><select id="roleFilter" aria-label="商机角色"><option value="">全部角色</option></select><span class="nav-stats" id="navStats" aria-live="polite"></span></div></div></nav>
+</style><link rel="stylesheet" href="language-switch.css"><link rel="stylesheet" href="customer-navigation.css?v=combined-outline"></head><body>
+<nav class="nav"><div class="nav-inner"><a class="language-switch" lang="zh-CN" href="./" data-alternate="./" aria-label="切换到英文" title="Switch to English"><span aria-hidden="true">&#20013;</span><span aria-hidden="true">&#33521;</span></a><span class="nav-title">客户分类</span><input aria-label="搜索公司、产品或介绍" id="search" placeholder="搜索公司、产品或介绍…"><div class="toolbar" id="views"><button data-view="all" class="active">客户池</button><button data-view="sales">商机</button><button data-view="new">本轮新增</button><button data-view="pending">报告待复核</button><button id="reset">重置筛选</button><button id="export">导出当前JSON</button></div><div class="customer-filters" id="customerFilters"><select aria-label="筛选Sector" id="sectorFilter"><option value="">全部行业</option></select><select aria-label="筛选Category" id="categoryFilter"><option value="">全部分类</option></select><select id="roleFilter" aria-label="商机角色"><option value="">全部角色</option></select><select aria-label="筛选Report" id="linkFilter"><option value="">全部报告</option><option>SEC</option><option>PDF</option><option>IR</option><option>Private</option><option>Review</option></select><span class="nav-stats" id="navStats" aria-live="polite"></span></div></div></nav>
 <div class="site-credits"><p>本站由 Leah He 与 Rain Yang 共同制作</p><div class="site-credits-grid"><div><p><strong>Leah He 何琳</strong> <span class="site-credits-role">· Sales Engineer</span></p><p class="site-credits-work">商机调研、竞品彩页馆搭建、网站架构与视觉设计</p></div><div><p><strong>Rain Yang 杨依锐</strong> <span class="site-credits-role">· Sales Engineer</span></p><p class="site-credits-work">客户池搭建、客户调研与分类</p></div></div></div>
 <div class="page-layout"><button type="button" id="outlineToggle" class="outline-edge-tab" aria-haspopup="dialog" aria-controls="outlineDrawer"><span class="outline-edge-icon" aria-hidden="true">☰</span><span class="outline-edge-label">目录</span></button><dialog class="page-outline" id="outlineDrawer" aria-labelledby="outlineTitle"><header class="outline-header"><h2 id="outlineTitle">目录</h2><button type="button" id="outlineClose" aria-label="关闭目录" autofocus>×</button></header><nav aria-labelledby="outlineTitle"><ul id="outlineLinks"></ul></nav></dialog><main class="main">
 <div id="content"></div>
@@ -1605,7 +1605,12 @@ outlineDrawer.addEventListener('click',event=>{
   if(event.clientX<left||event.clientX>right||event.clientY<top||event.clientY>bottom)outlineDrawer.close();
 });
 outlineLinks.addEventListener('click',event=>{
-  if(event.target.closest('a')&&!event.ctrlKey&&!event.metaKey&&!event.shiftKey&&!event.altKey)outlineDrawer.close();
+  const link=event.target.closest('a[data-outline-view]');
+  if(!link||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
+  event.preventDefault();
+  outlineDrawer.close();
+  if(link.href!==location.href)history.pushState(null,'',link.href);
+  openOutlineLocation();
 });
 const topNav=document.querySelector('.nav');
 const viewToolbar=document.getElementById('views');
@@ -1636,28 +1641,62 @@ function updateOutline(){
 function queueOutlineUpdate(){
   if(!outlineFrame)outlineFrame=requestAnimationFrame(updateOutline);
 }
+const outlineGroups = [
+  {
+    view:'all',
+    title:"客户池",
+    root:'content',
+    entries:[
+      ...getSectors().map(sector=>['sector-'+encodeURIComponent(sector),sector]),
+      ['brochure-library',"竞品彩页"]
+    ]
+  },
+  {
+    view:'sales',
+    title:"商机",
+    root:'role-validation',
+    entries:[
+      ...[["opportunity-paths","检索思路"],["customer-pool-tiers","客户池分层"],["customer-entry-standard","商机入池标准"],["public-evidence-boundary","公开资料的可获得性"]],
+      ...CASE_GROUPS.map(group=>[group.id,group.title])
+    ]
+  }
+];
+
+function outlineLink(id,title,view){
+  const link=document.createElement('a');
+  const url=new URL(location.href);
+  if(view==='all')url.searchParams.delete('view');
+  else url.searchParams.set('view',view);
+  url.hash=encodeURIComponent(id);
+  link.href=url.href;
+  link.dataset.outlineView=view;
+  link.textContent=title;
+  return link;
+}
+
 function renderOutline(){
   outlineLinks.replaceChildren();
-  outlineEntries=Array.from(document.querySelectorAll('main [data-outline-target]'),target=>{
+  outlineEntries=[];
+  for(const group of outlineGroups){
     const item=document.createElement('li');
-    const link=document.createElement('a');
-    const heading=target.matches('.section')?target.querySelector('h2'):target;
-    const level=Number(target.dataset.outlineLevel)||(heading.matches('h1,h2,h3,h4,h5,h6')?Number(heading.tagName[1]):2);
-    item.style.setProperty('--outline-indent',level-1);
-    link.href='#'+encodeURIComponent(target.id);
-    const title=document.createElement('span');
-    title.className='outline-title';
-    title.textContent=heading.textContent.trim();
-    link.append(title);
-    if(target.dataset.outlineNote){
-      const note=document.createElement('span');
-      note.className='outline-note';
-      note.textContent=target.dataset.outlineNote;
-      link.append(note);
+    item.className='outline-group';
+    const groupLink=outlineLink(group.root,group.title,group.view);
+    groupLink.className='outline-group-title';
+    const children=document.createElement('ul');
+    for(const [id,title] of group.entries){
+      const row=document.createElement('li');
+      const link=outlineLink(id,title,group.view);
+      row.append(link);
+      children.append(row);
+      const target=document.getElementById(id);
+      if(target)outlineEntries.push({target,link});
     }
-    item.append(link);
+    item.append(groupLink,children);
     outlineLinks.append(item);
-    return {target,link};
+  }
+  outlineEntries.sort((a,b)=>{
+    if(a.target===b.target)return 0;
+    return a.target.compareDocumentPosition(b.target)&Node.DOCUMENT_POSITION_FOLLOWING?-1:1;
   });
   updateOutline();
 }
@@ -1676,34 +1715,66 @@ document.getElementById('content').addEventListener('click',e=>{const sort=e.tar
     return;
   }
   if(e.target.closest('a,details'))return;const row=e.target.closest('[data-row]');if(row)toggle(row.dataset.row);});
-document.getElementById('views').addEventListener('click',e=>{const b=e.target.closest('[data-view]');if(b){activeView=b.dataset.view;if(activeView==='all'){['search','sectorFilter','categoryFilter','linkFilter','roleFilter'].forEach(id=>document.getElementById(id).value='');fillOptions('categoryFilter',getCategories(''));history.replaceState(null,'',location.pathname+location.search);}render();}});
+document.getElementById('views').addEventListener('click',e=>{
+  const button=e.target.closest('[data-view]');
+  if(!button)return;
+  activeView=button.dataset.view;
+  if(activeView==='all')clearOutlineFilters();
+  const url=new URL(location.href);
+  url.hash='';
+  if(activeView==='all')url.searchParams.delete('view');
+  else url.searchParams.set('view',activeView);
+  history.replaceState(null,'',url.href);
+  render();
+});
 document.getElementById('search').addEventListener('input',render);
 document.getElementById('sectorFilter').addEventListener('change',()=>{const s=document.getElementById('sectorFilter').value;if(s&&activeView==='sales')activeView='all';fillOptions('categoryFilter',getCategories(s));render();});
 ['categoryFilter','linkFilter','roleFilter'].forEach(id=>document.getElementById(id).addEventListener('change',render));
-document.getElementById('reset').addEventListener('click',()=>{['search','sectorFilter','categoryFilter','linkFilter','roleFilter'].forEach(id=>document.getElementById(id).value='');activeView='all';history.replaceState(null,'',location.pathname+location.search);sortKey='category';sortAsc=true;expanded.clear();fillOptions('categoryFilter',getCategories(document.getElementById('sectorFilter').value));render();});
+document.getElementById('reset').addEventListener('click',()=>{['search','sectorFilter','categoryFilter','linkFilter','roleFilter'].forEach(id=>document.getElementById(id).value='');activeView='all';const url=new URL(location.href);url.hash='';url.searchParams.delete('view');history.replaceState(null,'',url.href);sortKey='category';sortAsc=true;expanded.clear();fillOptions('categoryFilter',getCategories(document.getElementById('sectorFilter').value));render();});
 document.getElementById('export').addEventListener('click',()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(activeView === 'sales' ? filteredData : filteredData.map(company => ({ ...company, specialty: company.category, category: categoryName(company), role_for_us: OPPORTUNITY_ROLES[commercialProfile(company).role].label })),null,2)],{type:'application/json;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download=activeView==='sales'?'project-role-evidence-2026-11-18.json':'aidc-filtered-2026-11-18.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
 const roleFilter=document.getElementById('roleFilter');
 Object.entries(OPPORTUNITY_ROLES).forEach(([key,role])=>roleFilter.add(new Option(role.label,key)));
 fillOptions('sectorFilter',getSectors());fillOptions('categoryFilter',getCategories(document.getElementById('sectorFilter').value));render();
 
 
-function openLinkedPowerSector(){
-  let anchor;
-  try{anchor=decodeURIComponent(location.hash.slice(1));}catch{return;}
-  const power='AI 电力与功率电子基础设施';
-  if(!['sector-'+encodeURIComponent(power),'product-brochures','brochure-library'].includes(anchor))return;
-  if(activeView!=='all'||!document.getElementById(anchor)){
-    activeView='all';
-    if(!document.getElementById(anchor)){
-      ['search','sectorFilter','categoryFilter','linkFilter','roleFilter'].forEach(id=>document.getElementById(id).value='');
-      fillOptions('categoryFilter',getCategories(''));
-    }
+function clearOutlineFilters(){
+  for(const id of ['search','sectorFilter','categoryFilter','linkFilter','roleFilter']){
+    document.getElementById(id).value='';
+  }
+  fillOptions('categoryFilter',getCategories(''));
+}
+
+function openOutlineLocation(){
+  let id;
+  try{id=decodeURIComponent(location.hash.slice(1));}catch{return;}
+  const group=outlineGroups.find(item=>item.root===id||item.entries.some(([anchor])=>anchor===id));
+  const view=group?.view||(id==='product-brochures'?'all':null);
+  if(!view)return;
+  if(activeView!==view||!document.getElementById(id)){
+    activeView=view;
+    clearOutlineFilters();
     render();
   }
-  requestAnimationFrame(()=>{updateOutline();document.getElementById(anchor)?.scrollIntoView({block:'start'});});
+  requestAnimationFrame(()=>{
+    updateOutline();
+    const target=document.getElementById(id);
+    if(id==='content')window.scrollTo({top:0});
+    else target?.scrollIntoView({block:'start'});
+  });
 }
-window.addEventListener('hashchange',openLinkedPowerSector);
-openLinkedPowerSector();
+
+window.addEventListener('hashchange',openOutlineLocation);
+window.addEventListener('popstate',()=>{
+  if(location.hash){
+    openOutlineLocation();
+    return;
+  }
+  const requested=new URLSearchParams(location.search).get('view')||'all';
+  if(activeView!==requested){
+    document.querySelector(`#views button[data-view="${CSS.escape(requested)}"]`)?.click();
+  }
+});
+openOutlineLocation();
 </script><script src="language-switch.js"></script></body></html>
 
 
