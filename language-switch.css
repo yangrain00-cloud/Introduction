@@ -1,0 +1,212 @@
+.language-switch {
+  position: relative;
+  display: inline-block;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 36px;
+  border-radius: 8px;
+  color: #145ca8;
+  text-decoration: none;
+}
+
+.language-switch:hover,
+.language-switch:focus-visible {
+  background: #eaf3ff;
+}
+
+.language-switch:focus-visible {
+  outline: 2px solid #0071e3;
+  outline-offset: 2px;
+}
+
+.language-switch span {
+  position: absolute;
+  display: grid;
+  width: 21px;
+  height: 21px;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 5px;
+  background: #fff;
+  font: 700 12px/1 system-ui, sans-serif;
+}
+
+.language-switch span:first-child {
+  top: 4px;
+  left: 5px;
+}
+
+.language-switch span:last-child {
+  right: 4px;
+  bottom: 4px;
+  color: #fff;
+  background: #145ca8;
+  border-color: #145ca8;
+}
+
+.language-switch-docking {
+  visibility: hidden;
+}
+
+.language-intro {
+  position: fixed;
+  inset: 0;
+  overflow: auto;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 20px;
+  border: 0;
+  box-sizing: border-box;
+  background: transparent;
+  color: #1d1d1f;
+  font-family: system-ui, sans-serif;
+}
+
+.language-intro[open] {
+  display: grid;
+  place-items: center;
+}
+
+.language-intro::backdrop {
+  background: rgba(240, 244, 252, .52);
+  backdrop-filter: blur(11px) saturate(120%);
+  transition: opacity 460ms ease;
+}
+
+.language-intro-panel {
+  width: min(100%, 490px);
+  padding: clamp(20px, 5vw, 34px);
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, .85);
+  border-radius: 30px;
+  background: rgba(255, 255, 255, .64);
+  box-shadow: 0 24px 80px rgba(36, 60, 100, .16), 0 2px 12px rgba(36, 60, 100, .05);
+  text-align: center;
+  transition: opacity 230ms ease, transform 460ms cubic-bezier(.22,.72,.22,1);
+}
+
+.language-intro-panel h1 {
+  margin: 0 0 12px;
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -.025em;
+}
+
+.language-intro-panel h1 span {
+  margin-inline-start: 5px;
+  color: #515e71;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: normal;
+}
+
+.language-intro-credits {
+  display: grid;
+  gap: 13px;
+  margin-bottom: 19px;
+  padding-bottom: 17px;
+  border-bottom: 1px solid rgba(56, 89, 136, .14);
+  text-align: left;
+}
+
+.language-intro-credits h2 {
+  margin: 0;
+  color: #515e71;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.language-intro-author p {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.language-intro-author p + p {
+  margin-top: 3px;
+  color: #515e71;
+  font-size: 13px;
+}
+
+.language-intro-author strong {
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.language-intro-role {
+  color: #515e71;
+  font-size: 12px;
+}
+
+.language-intro-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  width: min(100%, 220px);
+  margin-inline: auto;
+}
+
+.language-intro-options button {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  padding: 8px 6px 7px;
+  border: 1px solid rgba(56, 89, 136, .12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .75);
+  color: #233550;
+  font: 600 14px system-ui, sans-serif;
+  cursor: pointer;
+  transition: background 180ms ease, border-color 180ms ease;
+}
+
+.language-intro-options button:hover {
+  border-color: #91bbeb;
+  background: #f1f7ff;
+}
+
+.language-intro-options button:focus-visible {
+  outline: 2px solid #0071e3;
+  outline-offset: 3px;
+}
+
+.language-intro-glyph,
+.language-flight-tile {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  box-sizing: border-box;
+  place-items: center;
+  border: 1px solid #c9def8;
+  border-radius: 9px;
+  background: #e8f2ff;
+  color: #145ca8;
+  font: 700 18px/1 system-ui, sans-serif;
+}
+
+.language-flight-tile {
+  position: fixed;
+  z-index: 1;
+  pointer-events: none;
+  transform-origin: top left;
+}
+
+.language-intro.is-docking .language-intro-panel {
+  opacity: 0;
+  transform: scale(.96);
+  pointer-events: none;
+}
+
+.language-intro.is-docking .language-intro-glyph,
+.language-intro.is-docking::backdrop {
+  opacity: 0;
+}
+
+@media (max-width: 768px) {
+  .nav-inner .language-switch + .nav-title {
+    width: auto;
+    flex: 1 0 calc(100% - 46px);
+  }
+}
