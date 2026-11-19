@@ -97,7 +97,7 @@
 .table-wrap th:nth-child(3) { width: 18%; }
 .table-wrap th:nth-child(4) { width: 16%; }
 .table-wrap th:nth-child(5) { width: auto; }
-.table-wrap th:nth-child(6) { width: 116px; }
+.table-wrap th:nth-child(6) { width: 132px; }
 
 .table-wrap td {
   overflow-wrap: anywhere;
